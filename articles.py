@@ -5,7 +5,7 @@ posts = [{'author': 'MikeSoWeb',
                      'Common patterns are described in the Patterns for Flask section. The rest of the docs describe '
                      'each component of Flask in detail, with a full reference in the API section.',
           'tags': 'Flask',
-          'date': '23.04.2021'},
+          'date_posted': '23.04.2021'},
 
          {'author': 'Tom Soyer',
           'title': 'Jinja is cool',
@@ -13,7 +13,7 @@ posts = [{'author': 'MikeSoWeb',
                      'allow writing code similar to Python syntax. Then the template is passed data to render the '
                      'final document.',
           'tags': 'Jinja',
-          'date': '17.04.2021'},
+          'date_posted': '17.04.2021'},
 
          {'author': 'Piter Pen',
           'title': 'Welcome to Werkzeug',
@@ -21,5 +21,5 @@ posts = [{'author': 'MikeSoWeb',
                      'various utilities for WSGI applications and has become one of the most advanced WSGI utility '
                      'libraries.',
           'tags': 'Flask',
-          'date': '25.05.2021'},
+          'date_posted': '25.05.2021'},
          ]
