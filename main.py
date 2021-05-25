@@ -6,12 +6,12 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html', title='Main page')
+    return render_template('index.html', title='Main')
 
 
 @app.route('/blog')
 def blog():
-    return render_template('blog.html', title='Blog page', posts=posts)
+    return render_template('blog.html', title='Blog', posts=posts)
 
 
 if __name__ == '__main__':
