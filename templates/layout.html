@@ -3,9 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-{{ title }}
+<ul class="main_menu">
+    <li><a href="/"><p>Главная</p></a></li>
+    <li><a href="blog"><p>Блог</p></a></li>
+    <li><a href="/girls"><p>Девочки</p></a></li>
+    <li><a href="/contact"><p>Контакты</p></a></li>
+</ul>
+
 {% block content %}
 {% endblock %}
 
