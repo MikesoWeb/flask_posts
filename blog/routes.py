@@ -1,10 +1,10 @@
 from flask import render_template, flash, redirect, url_for
+from blog import app, db, bcrypt
 
-from blog import app
-# from blog.models import Post, User
 from blog.articles import posts
+from blog.models import User
 
-from blog.forms import RegistrationForm, LoginForm
+from forms import RegistrationForm, LoginForm
 
 
 @app.route('/')
@@ -31,8 +31,12 @@ def contact():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f'Account created for {form.username.data}!', 'success')
-        return redirect(url_for('blog'))
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, password=hashed_password)
+        db.session.add(user)
+        db.session.commit()
+        flash('You account has been created! You are now able to log in', 'success')
+        return redirect(url_for('login'))
     return render_template('register.html', form=form, title='Register')
 
 
