@@ -4,7 +4,7 @@ from blog import app, db, bcrypt
 from blog.articles import posts
 from blog.models import User
 
-from forms import RegistrationForm, LoginForm
+from blog.forms import RegistrationForm, LoginForm
 
 
 @app.route('/')
