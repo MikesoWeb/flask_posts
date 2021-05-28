@@ -1,8 +1,7 @@
 from flask import render_template, flash, redirect, url_for, request
 from blog import app, db, bcrypt
 
-from blog.articles import posts
-from blog.models import User, Post
+from blog.models import User
 from flask_login import login_user, current_user, logout_user, login_required
 
 from blog.forms import RegistrationForm, LoginForm
@@ -10,22 +9,24 @@ from blog.forms import RegistrationForm, LoginForm
 
 @app.route('/')
 def home():
-    return render_template('index.html', title='Main')
+    count_user = User.query.count()
+    list_user = User.query.all()
+    return render_template('index.html', title='Main', count_user=count_user, list_user=list_user)
 
 
 @app.route('/blog')
 def blog():
-    return render_template('blog.html', title='Blog', posts=posts)
+    return render_template('blog.html', title='Blog')
 
 
 @app.route('/about')
 def about():
-    return render_template('about.html', title='About', posts=posts)
+    return render_template('about.html', title='About')
 
 
 @app.route('/contact')
 def contact():
-    return render_template('contact.html', title='Contacts', posts=posts)
+    return render_template('contact.html', title='Contacts')
 
 
 @app.route('/register', methods=['GET', 'POST'])
