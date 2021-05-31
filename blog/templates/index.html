@@ -1,17 +1,55 @@
+
 {% extends 'layout.html' %}
 
-{% block content %}
-<center><h1>Mike`s blog</h1></center>
-<br>
-<br>
-<br>
-<br>
-<br>
-<center><h5>Пользователей в базе: </h5> <p>{{  count_user }}</p>
-<ol>
-    {% for user in list_user %}
-    <li>{{ user.username }} -  {{ user.email }}</li>
-    {% endfor %}
-</ol>
-</center>
-{% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+</head>
+
+<body>
+
+{% block main_page %}
+    <div class="wrap">
+        <div class="info">
+            <div class="description">
+                <p class='names'> Mike do IT - fullstack разработка </p>
+                <div class="desc">
+                    <ul class="checkmark">
+                        <a href="#">
+                            <li>Html</li>
+                        </a>
+                        <a href="#">
+                            <li>Css</li>
+                        </a>
+                        <a href="#">
+                            <li>Python</li>
+                        </a>
+                        <a href="#">
+                            <li>Java Script</li>
+                        </a>
+                        <a href="#">
+                            <li>Flask</li>
+                        </a>
+                        <a href="#">
+                            <li>Django</li>
+                        </a>
+
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+{% endblock main_page %}
+
+{% block footer %}
+
+    <footer class="footer">Все права защищены!<br>
+        &#169; Терехов Михаил 2021 </footer>
+</body>
+
+{% endblock footer %}
+

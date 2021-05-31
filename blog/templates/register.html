@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div class="content-section">
+<div class="content-section pt-5 mb-5">
     <form action="" method="POST">
 
         {{ form.hidden_tag() }}
@@ -76,8 +76,9 @@
 
 <div class="border-top pt-3">
     <small class="text-muted">
-        Already Have An Account? <a class='ml-2' href="{{ url_for('login')}}">Sign In</a>
+        Уже есть аккаунт? <a class='ml-2' href="{{ url_for('login')}}">Войти</a>
     </small>
+</div>
 </div>
 
 {% endblock %}
