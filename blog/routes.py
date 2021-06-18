@@ -80,5 +80,6 @@ def account():
         form.username.data = current_user.username
         form.email.data = current_user.email
     image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
+    user_all = [x.username for x in db.session.query(User.username).distinct()]
     return render_template('account.html', title='Account',
-                           image_file=image_file, form=form)
+                           image_file=image_file, form=form, user_all=user_all)
