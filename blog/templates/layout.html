@@ -22,11 +22,13 @@
 </head>
 
 <body>
+
+<div class="wrap">
 {% block menu %}
 <header class="header">
 
     <div class="logo">
-        <img src="{{ url_for('static', filename='img/ioA6tYaKRbU.jpg') }}" alt="foto">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="foto">
     </div>
 
 
@@ -53,9 +55,12 @@
 
 {% endblock menu %}
 
-<main role="main" class="container">
-    <div class="row">
-        <div class="col-md-12">
+    <div class="empty_block"></div>
+
+    <div class="content">
+        <main role="main" class="#">
+            <div class="row">
+            <div class="col-md-12">
             {% with messages = get_flashed_messages(with_categories=True) %}
 
             {% if messages %}
@@ -70,9 +75,11 @@
 
             {% block content %}{% endblock content %}
         </div>
-
         </div>
-</main>
+
+        </main>
+    </div>
+
 
 {% block main_page %}
 
@@ -87,13 +94,12 @@
 
 
 
-
 {% block footer %}
 
     <footer class="footer">Все права защищены!<br>
         &#169; Терехов Михаил 2021 </footer>
 
 {% endblock footer %}
-
+</div>
 </body>
 </html>

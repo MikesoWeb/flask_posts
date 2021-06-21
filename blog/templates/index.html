@@ -1,55 +1,38 @@
-
 {% extends 'layout.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>Document</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
-</head>
-
-<body>
 
 {% block main_page %}
-    <div class="wrap">
-        <div class="info">
-            <div class="description">
-                <p class='names'> Mike do IT - fullstack разработка </p>
-                <div class="desc">
-                    <ul class="checkmark">
-                        <a href="{{ url_for}}">
-                            <li>Html</li>
-                        </a>
-                        <a href="#">
-                            <li>Css</li>
-                        </a>
-                        <a href="#">
-                            <li>Python</li>
-                        </a>
-                        <a href="#">
-                            <li>Java Script</li>
-                        </a>
-                        <a href="#">
-                            <li>Flask</li>
-                        </a>
-                        <a href="#">
-                            <li>Django</li>
-                        </a>
+<div class="wrap">
+    <div class="empty_block"></div>
+    <div class="info">
+        <div class="description">
+            <p class='names'> Mike do IT - fullstack разработка </p>
+            <div class="desc">
+                <ul class="checkmark">
+                    <a href="{{ url_for('html_page') }}">
+                        <li>Html</li>
+                    </a>
+                    <a href="{{ url_for('css_page') }}">
+                        <li>Css</li>
+                    </a>
+                    <a href="{{ url_for('python_page') }}">
+                        <li>Python</li>
+                    </a>
+                    <a href="{{ url_for('js_page') }}">
+                        <li>Java Script</li>
+                    </a>
+                    <a href="{{ url_for('flask_page') }}">
+                        <li>Flask</li>
+                    </a>
+                    <a href="{{ url_for('django_page') }}">
+                        <li>Django</li>
+                    </a>
 
-                    </ul>
-                </div>
+                </ul>
             </div>
-
         </div>
-
-
     </div>
+</div>
+
 {% endblock main_page %}
-
-{% block footer %}
-
-    <footer class="footer">Все права защищены!<br>
-        &#169; Терехов Михаил 2021 </footer>
-</body>
-
-{% endblock footer %}
 

@@ -3,9 +3,12 @@
 
 {% block content %}
 
+    <div class="empty_block"></div>
 
 <div class="content-section">
     <div class="card">
+                        <legend class="border-bottom mb-6">Account Info</legend>
+
         <img class="card-body account-img " src="{{ image_file }}">
         <div class="media-body">
             <h2 class="account-heading">{{ current_user.username }}</h2>
@@ -13,12 +16,13 @@
         </div>
     </div>
     <!-- FORM HERE -->
+    <div class="update_info">
 
         <form action="" method="POST">
 
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Account Info</legend>
+                <legend class="border-bottom mb-6">Update Info</legend>
                 <div class="form-group">
                     {{ form.username.label(class='form-control-label') }}
 
@@ -58,11 +62,12 @@
         </form>
     </div>
 
-<div>
 
-        {{ user_all  }}
+
+<!--        {{ user_all  }}-->
 
 </div>
+    <div class="empty_block"></div>
 
 {% endblock content %}
 

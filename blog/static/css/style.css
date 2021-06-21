@@ -1,59 +1,36 @@
-/*
 * {
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-*/
-
+html,
 body {
-    margin: 0 auto;
-    padding: 0;
-    display: flex;
-    justify-content: flex-end;
-    flex-direction: column;
-    /*    box-sizing: border-box;*/
-    font-family: monospace;
-
-
+  height: 100%;
 }
 
 .logo img {
-
-    display: flex;
     float: left;
-    flex-wrap: wrap;
     margin-left: 100px;
-    margin-top: 40px;
     /*        padding: 20px 0 20px 20px;*/
 
     background-image: url("/img/ioA6tYaKRbU.jpg");
     background-size: cover;
     background-repeat: no-repeat;
-    width: 240px;
-    border-radius: 200px;
+    width: 200px;
     box-shadow: 0px 0px 0px lightgreen;
-
-
 }
 
-
-
-
-.wrap {
-    min-height: calc(100vh - 1000px);
+.empty_block{
+height:50px;
 }
-
-
 
 .header {
     height: 160px;
     text-align: right;
-    padding-bottom: 40px;
+    padding-bottom: 0px;
     /*    margin-bottom: 20px;*/
     background-image: linear-gradient(60deg, #abecd6 0%, #fbed96 100%);
     padding-right: 50px;
-
 }
-
 
 .header li {
     float: right;
@@ -103,8 +80,8 @@ body {
 
 .info {
     display: flex;
-    margin: 80px auto 20px;
-    width: 90%;
+    margin: 0px auto 0px;
+    width: 80%;
     /*    border: 1px red solid;*/
     box-shadow: -5px 15px 10px skyblue;
     align-items: center;
@@ -137,6 +114,12 @@ body {
 
 }
 
+.content{
+width: 80%;
+margin: 0 auto;
+flex: 1 0 auto;
+}
+
 .desc {
     width: 100%;
     font-weight: 600;
@@ -154,7 +137,7 @@ body {
     font-style: normal;
     /*            text-decoration: underline darkgrey;*/
     box-shadow: 5px 3px 10px grey;
-    font-size: 30px;
+    font-size: 25px;
     padding: 5px;
     font-family: monospace;
     border-radius: 200px;
@@ -185,27 +168,38 @@ ul {
     list-style-type: none;
 }
 
-.container{
-border: 1px green solid;
-margin: 0 auto;
-
-
+.wrap{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 
 }
 
 
 .content-section{
-width: 80%;
-align-items: center;
+display: flex;
+flex-direction: column;
+align-items: flex-end;
 margin: 0 auto;
 
 
 }
+
+.update_info{
+text-align: center;
+width: 400px;
+
+}
+
 
 .card{
-margin: 0 auto;
+text-align: center;
+align-items: center;
+width: 400px;
+
 
 }
+
 .account-img{
 width:250px;
 
@@ -213,10 +207,9 @@ width:250px;
 
 
 .footer {
-
-    margin-top: 20px;
     display: flex;
-    min-height: 150px;
+    width: 100%;
+    height: 100px;
     /*    border: 2px red solid;*/
     background-color: antiquewhite;
     align-items: center;
@@ -224,5 +217,6 @@ width:250px;
     text-align: center;
     font-size: 15px;
     font-family: monospace;
+   flex: 0 0 auto;
 
 }
