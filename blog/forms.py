@@ -1,6 +1,7 @@
 from flask import flash
 from flask_login import current_user
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField
 from flask_wtf.file import FileField, FileAllowed
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
@@ -18,13 +19,13 @@ class RegistrationForm(FlaskForm):
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()
         if user:
-            flash('That username is taken. Please choose a different one', 'danger')
+            flash('Это имя уже занято. Пожалуйста, выберите другое', 'danger')
             raise ValidationError('That username is taken. Please choose a different one')
 
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
         if user:
-            flash('That email is taken. Please choose a different one', 'danger')
+            flash('Этот емайл уже занят. Пожалуйста, введите другой', 'danger')
             raise ValidationError('That email is taken. Please choose a different one')
 
 
@@ -45,12 +46,12 @@ class UpdateAccountForm(FlaskForm):
         if username.data != current_user.username:
             user = User.query.filter_by(username=username.data).first()
             if user:
-                flash('That username is taken. Please choose a different one', 'danger')
+                flash('Это имя уже занято. Пожалуйста, выберите другое', 'danger')
                 raise ValidationError('That username is taken. Please choose a different one')
 
     def validate_email(self, email):
         if email.data != current_user.email:
             user = User.query.filter_by(email=email.data).first()
             if user:
-                flash('That email is taken. Please choose a different one', 'danger')
+                flash('Этот емайл уже занят. Пожалуйста, введите другой', 'danger')
                 raise ValidationError('That email is taken. Please choose a different one')

@@ -187,7 +187,7 @@ margin: 0 auto;
 
 .update_info{
 text-align: center;
-width: 400px;
+width: 300px;
 
 }
 
@@ -195,15 +195,37 @@ width: 400px;
 .card{
 text-align: center;
 align-items: center;
-width: 400px;
+width: 300px;
+border :none;
 
 
 }
 
 .account-img{
-width:250px;
+width:300px;
+border-radius: 50px;
+}
+
+.account-img:active{
+width:800px;
+position: absolute;
+bottom: -400px;
+right: 500px;
+box-shadow: 1px 1px 10px 3px aqua;
 
 }
+
+.font_info{
+font-size: 20px;
+color: blue;
+}
+
+.font_update{
+color: orange;
+font-size: 20px;
+
+}
+
 
 .login_form{
 width: 50%;

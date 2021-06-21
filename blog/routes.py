@@ -56,7 +56,7 @@ def login():
             next_page = request.args.get('next')
             return redirect(next_page) if next_page else redirect(url_for('account'))
         else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
+            flash('Войти не удалось. Пожалуйста, проверьте электронную почту или пароль', 'danger')
     return render_template('login.html', form=form, title='Login')
 
 
@@ -86,6 +86,7 @@ def account():
 
 
 @app.route('/html_page')
+@login_required
 def html_page():
     return render_template('html_page.html')
 
