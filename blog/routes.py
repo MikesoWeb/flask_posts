@@ -1,3 +1,5 @@
+import secrets, os
+from PIL import Image
 from flask import render_template, flash, redirect, url_for, request
 from blog import app, db, bcrypt
 
@@ -66,11 +68,31 @@ def logout():
     return redirect(url_for('home'))
 
 
+def save_picture(form_picture):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    full_path = os.path.join(app.root_path, 'static', 'profile_pics', current_user.username)
+    if not os.path.exists(full_path):
+        os.mkdir(full_path)
+
+    picture_path = os.path.join(full_path, picture_fn)
+    output_size = (350, 350)
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+
+    i.save(picture_path)
+    return picture_fn
+
+
 @app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
     form = UpdateAccountForm()
     if form.validate_on_submit():
+        if form.picture.data:
+            picture_file = save_picture(form.picture.data)
+            current_user.image_file = picture_file
         current_user.username = form.username.data
         current_user.email = form.email.data
         db.session.commit()
@@ -79,7 +101,7 @@ def account():
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
-    image_file = url_for('static', filename='profile_pics/' + current_user.image_file)
+    image_file = url_for('static', filename=f'profile_pics/' + current_user.username + '/' + current_user.image_file)
     user_all = [x.username for x in db.session.query(User.username).distinct()]
     return render_template('account.html', title='Account',
                            image_file=image_file, form=form, user_all=user_all)

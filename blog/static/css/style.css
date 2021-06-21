@@ -202,12 +202,12 @@ border :none;
 }
 
 .account-img{
-width:300px;
+width:200px;
 border-radius: 50px;
 }
 
 .account-img:active{
-width:800px;
+width:500px;
 position: absolute;
 bottom: -400px;
 right: 500px;
