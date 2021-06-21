@@ -185,22 +185,30 @@ ul {
     list-style-type: none;
 }
 
-.content-section{
-display: flex;
-align-items: center;
-border: 1px red solid;
+.container{
+border: 1px green solid;
 margin: 0 auto;
+
+
+
+}
+
+
+.content-section{
+width: 80%;
+align-items: center;
+margin: 0 auto;
+
 
 }
 
 .card{
-width: 300px;
-justify-content: flex-end;
-
+margin: 0 auto;
 
 }
 .account-img{
 width:250px;
+
 }
 
 
