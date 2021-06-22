@@ -1,4 +1,4 @@
-import secrets, os
+import secrets, os, shutil
 from PIL import Image
 from flask import render_template, flash, redirect, url_for, request
 from blog import app, db, bcrypt
@@ -41,6 +41,11 @@ def register():
         user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
+
+        full_path = os.path.join(app.root_path, 'static', 'profile_pics', user.username)
+        if not os.path.exists(full_path):
+            os.mkdir(full_path)
+        shutil.copy(f'{app.root_path}/static/profile_pics/default.jpg', full_path)
         flash('You account has been created! You are now able to log in', 'success')
         return redirect(url_for('login'))
     return render_template('register.html', form=form, title='Register')
@@ -73,14 +78,10 @@ def save_picture(form_picture):
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
     full_path = os.path.join(app.root_path, 'static', 'profile_pics', current_user.username)
-    if not os.path.exists(full_path):
-        os.mkdir(full_path)
-
     picture_path = os.path.join(full_path, picture_fn)
     output_size = (350, 350)
     i = Image.open(form_picture)
     i.thumbnail(output_size)
-
     i.save(picture_path)
     return picture_fn
 
@@ -114,25 +115,30 @@ def html_page():
 
 
 @app.route('/css_page')
+@login_required
 def css_page():
     return render_template('css_page.html')
 
 
 @app.route('/js_page')
+@login_required
 def js_page():
     return render_template('js_page.html')
 
 
 @app.route('/python_page')
+@login_required
 def python_page():
     return render_template('python_page.html')
 
 
 @app.route('/flask_page')
+@login_required
 def flask_page():
     return render_template('flask_page.html')
 
 
 @app.route('/django_page')
+@login_required
 def django_page():
     return render_template('django_page.html')
