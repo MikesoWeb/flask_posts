@@ -201,6 +201,20 @@ border :none;
 
 }
 
+.post{
+width: 80%;
+padding: 10px 40px;
+margin: 0 auto;
+}
+
+.post_paginate{
+width: 40%;
+text-align: center;
+margin: 0 auto;
+
+}
+
+
 .account-img{
 width:200px;
 border-radius: 50px;

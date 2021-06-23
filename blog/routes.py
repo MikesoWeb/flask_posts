@@ -12,23 +12,24 @@ from blog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
 
 @app.route('/')
 def home():
-    return render_template('index.html', title='Main')
+    return render_template('index.html', title='Главная')
 
 
 @app.route('/blog')
 def blog():
-    posts = Post.query.all()
-    return render_template('blog.html', title='Blog', posts=posts)
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page, per_page=2)
+    return render_template('blog.html', title='Блог>', posts=posts)
 
 
 @app.route('/about')
 def about():
-    return render_template('about.html', title='About')
+    return render_template('about.html', title='О блоге')
 
 
 @app.route('/contact')
 def contact():
-    return render_template('contact.html', title='Contacts')
+    return render_template('contact.html', title='Контакты')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -46,9 +47,9 @@ def register():
         if not os.path.exists(full_path):
             os.mkdir(full_path)
         shutil.copy(f'{app.root_path}/static/profile_pics/default.jpg', full_path)
-        flash('You account has been created! You are now able to log in', 'success')
+        flash('Ваш аккаунт был создан. Вы можете войти на блог', 'success')
         return redirect(url_for('login'))
-    return render_template('register.html', form=form, title='Register')
+    return render_template('register.html', form=form, title='Регистрация')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -64,7 +65,7 @@ def login():
             return redirect(next_page) if next_page else redirect(url_for('account'))
         else:
             flash('Войти не удалось. Пожалуйста, проверьте электронную почту или пароль', 'danger')
-    return render_template('login.html', form=form, title='Login')
+    return render_template('login.html', form=form, title='Логин')
 
 
 @app.route('/logout')
@@ -100,14 +101,14 @@ def account():
         current_user.username = form.username.data
         current_user.email = form.email.data
         db.session.commit()
-        flash('You account has been updated!', 'success')
+        flash('Ваш аккаунт был обновлён!', 'success')
         return redirect(url_for('account'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
     image_file = url_for('static', filename=f'profile_pics/' + current_user.username + '/' + current_user.image_file)
     user_all = [x.username for x in db.session.query(User.username).distinct()]
-    return render_template('account.html', title='Account',
+    return render_template('account.html', title='Аккаунт',
                            image_file=image_file, form=form, user_all=user_all)
 
 
@@ -119,10 +120,10 @@ def new_post():
         post = Post(title=form.title.data, content=form.content.data, author=current_user)
         db.session.add(post)
         db.session.commit()
-        flash('Your post has been created!', 'success')
+        flash('Данный пост был обновлён!', 'success')
         return redirect(url_for('blog'))
-    return render_template('create_post.html', title='New Post',
-                           form=form, legend='New Post')
+    return render_template('create_post.html', title='Новая статья',
+                           form=form, legend='Новая статья')
 
 
 @app.route('/post/<int:post_id>')
@@ -149,8 +150,8 @@ def update_post(post_id):
 
         form.title.data = post.title
         form.content.data = post.content
-    return render_template('create_post.html', title='Update Post',
-                           form=form, legend='Update Post')
+    return render_template('create_post.html', title='Обновить статью',
+                           form=form, legend='Обновить статью')
 
 
 @app.route('/post/<int:post_id>/delete', methods=['POST'])
@@ -163,6 +164,16 @@ def delete_post(post_id):
     db.session.commit()
     flash('Данный пост был удален', 'success')
     return redirect(url_for('blog'))
+
+
+@app.route('/user/<string:username>')
+def user_posts(username):
+    page = request.args.get('page', 1, type=int)
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = Post.query.filter_by(author=user)\
+        .order_by(Post.date_posted.desc()) \
+        .paginate(page=page, per_page=3)
+    return render_template('user_posts.html', title='Блог>', posts=posts, user=user)
 
 
 @app.route('/html_page')
