@@ -3,22 +3,21 @@ from PIL import Image
 from flask import render_template, flash, redirect, url_for, request
 from blog import app, db, bcrypt
 
-from blog.models import User
+from blog.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 
-from blog.forms import RegistrationForm, LoginForm, UpdateAccountForm
+from blog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
 
 
 @app.route('/')
 def home():
-    count_user = User.query.count()
-    list_user = User.query.all()
-    return render_template('index.html', title='Main', count_user=count_user, list_user=list_user)
+    return render_template('index.html', title='Main')
 
 
 @app.route('/blog')
 def blog():
-    return render_template('blog.html', title='Blog')
+    posts = Post.query.all()
+    return render_template('blog.html', title='Blog', posts=posts)
 
 
 @app.route('/about')
@@ -77,7 +76,7 @@ def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
-    full_path = os.path.join(app.root_path, 'static', 'profile_pics', current_user.username)
+    full_path = os.path.join(app.root_path, 'static', 'profile_pics/', current_user.username)
     if not os.path.exists(full_path):
         os.mkdir(full_path)
     picture_path = os.path.join(full_path, picture_fn)
@@ -97,9 +96,8 @@ def account():
             picture_file = save_picture(form.picture.data)
             current_user.image_file = picture_file
 
-        current_user.username = form.username.data
+        current_user.username = 'Mike'
         current_user.email = form.email.data
-
         db.session.commit()
         flash('You account has been updated!', 'success')
         return redirect(url_for('account'))
@@ -110,6 +108,25 @@ def account():
     user_all = [x.username for x in db.session.query(User.username).distinct()]
     return render_template('account.html', title='Account',
                            image_file=image_file, form=form, user_all=user_all)
+
+
+@app.route('/post/new', methods=['GET', 'POST'])
+@login_required
+def new_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(title=form.title.data, content=form.content.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post has been created!', 'success')
+        return redirect(url_for('home'))
+    return render_template('create_post.html', title='New Post', form=form)
+
+
+@app.route('/post/<int:post_id>')
+def post(post_id):
+    post = Post.query.get_or_404(post_id)
+    return render_template('post.html', title=post.title, post=post)
 
 
 @app.route('/html_page')
