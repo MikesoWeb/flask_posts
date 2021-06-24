@@ -1,9 +1,9 @@
 from flask import flash
 from flask_login import current_user
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from flask_wtf.file import FileAllowed, FileField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms.validators import DataRequired, EqualTo, Length, Email, ValidationError
 
 from blog.models import User
 
@@ -56,12 +56,6 @@ class UpdateAccountForm(FlaskForm):
                 raise ValidationError('That email is taken. Please choose a different one')
 
 
-class PostForm(FlaskForm):
-    title = StringField('Заголовок', validators=[DataRequired()])
-    content = TextAreaField('Статья', validators=[DataRequired()])
-    submit = SubmitField('Опубликовать')
-
-
 class RequestResetForm(FlaskForm):
     email = StringField('Емайл', validators=[DataRequired(), Email()])
     submit = SubmitField('Сбросить пароль')
@@ -77,4 +71,3 @@ class ResetPasswordForm(FlaskForm):
     password = PasswordField('Пароль', validators=[DataRequired()])
     confirm_password = PasswordField('Подтвердите пароль', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Сбросить пароль')
-

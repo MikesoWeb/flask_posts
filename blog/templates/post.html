@@ -5,11 +5,11 @@
 <img src="{{ url_for('static', filename='profile_pics/' + post.author.username + '/' + post.author.image_file) }}"
      alt="" class="mr-3 mt-3 rounded-circle" style="width:40px;">
 
-<a class="mr-2" href="{{ url_for('user_posts', username=post.author.username)}}">{{ post.author.username }}</a>
+<a class="mr-2" href="{{ url_for('users.user_posts', username=post.author.username)}}">{{ post.author.username }}</a>
 <small class="text-muted">{{ post.date_posted.strftime('%d.%m.%Y-%H.%M') }}</small>
 {% if post.author == current_user %}
 
-<a class="btn btn-secondary btn-sm m-2" href="{{ url_for('update_post', post_id=post.id) }}">Обновить</a>
+<a class="btn btn-secondary btn-sm m-2" href="{{ url_for('posts.update_post', post_id=post.id) }}">Обновить</a>
 <button type="button" class="btn btn-danger btn-sm m-1" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
     Удалить
 </button>
@@ -32,7 +32,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                <form action="{{ url_for('delete_post', post_id=post.id) }}" method="post">
+                <form action="{{ url_for('posts.delete_post', post_id=post.id) }}" method="post">
                     <input type="submit" class="btn btn-danger" value="Удалить">
 
                 </form>

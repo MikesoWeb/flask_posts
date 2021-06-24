@@ -34,18 +34,17 @@
 
     <ul class='list'>
         {% if current_user.is_authenticated %}
-                    <li><a href="{{ url_for('logout') }}">Выход</a></li>
-                    <li><a href="{{ url_for('account') }}">Аккаунт</a></li>
-                    <li><a href="{{ url_for('new_post') }}">Создать</a></li>
-                    <li><a href="{{ url_for('blog') }}">Блог</a></li>
-                    <li><a href="{{ url_for('home') }}">Главная</a></li>
+                    <li><a href="{{ url_for('users.logout') }}">Выход</a></li>
+                    <li><a href="{{ url_for('users.account') }}">Аккаунт</a></li>
+                    <li><a href="{{ url_for('posts.new_post') }}">Создать</a></li>
+                    <li><a href="{{ url_for('main.blog') }}">Блог</a></li>
+                    <li><a href="{{ url_for('main.home') }}">Главная</a></li>
 
 
         {% else %}
-                    <li><a href="#">Контакты</a></li>
-                    <li><a href="{{ url_for('login') }}">Логин</a></li>
-                    <li><a href="{{ url_for('register') }}">Регистрация</a></li>
-                    <li><a href="{{ url_for('home') }}">Главная</a></li>
+                    <li><a href="{{ url_for('users.login') }}">Логин</a></li>
+                    <li><a href="{{ url_for('users.register') }}">Регистрация</a></li>
+                    <li><a href="{{ url_for('main.home') }}">Главная</a></li>
 
 
         {% endif %}
