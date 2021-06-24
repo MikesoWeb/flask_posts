@@ -5,7 +5,7 @@ from flask import Blueprint, request, render_template, url_for, flash
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.utils import redirect
 
-from blog import bcrypt, db, app
+from blog import bcrypt, db
 from blog.models import User, Post
 from blog.users.forms import RequestResetForm, ResetPasswordForm, UpdateAccountForm, RegistrationForm, LoginForm
 from blog.users.utils import send_reset_email, save_picture
@@ -24,10 +24,10 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        full_path = os.path.join(app.root_path, 'static', 'profile_pics', user.username)
+        full_path = os.path.join(current_user.root_path, 'static', 'profile_pics', user.username)
         if not os.path.exists(full_path):
             os.mkdir(full_path)
-        shutil.copy(f'{app.root_path}/static/profile_pics/default.jpg', full_path)
+        shutil.copy(f'{current_user.root_path}/static/profile_pics/default.jpg', full_path)
         flash('Ваш аккаунт был создан. Вы можете войти на блог', 'success')
         return redirect(url_for('users.login'))
     return render_template('register.html', form=form, title='Регистрация')
