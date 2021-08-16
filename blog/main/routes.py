@@ -1,5 +1,5 @@
-from flask import render_template, request, Blueprint
-from flask_login import login_required
+from flask import render_template, request, Blueprint, url_for
+from flask_login import login_required, current_user
 
 from blog.models import Post
 
@@ -11,12 +11,16 @@ def home():
     return render_template('index.html', title='Главная')
 
 
-@main.route('/blog')
+@main.route('/blog', methods=['POST', 'GET'])
 def blog():
+    post = Post.query.get_or_404(current_user.id)
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.date_posted.desc()) \
         .paginate(page=page, per_page=2)
-    return render_template('blog.html', title='Блог>', posts=posts)
+    image_file = url_for('static',
+                         filename=f'profile_pics/{current_user.username}/{post.image_post}')
+
+    return render_template('blog.html', title='Блог>', posts=posts, image_file=image_file)
 
 
 @main.route('/about')

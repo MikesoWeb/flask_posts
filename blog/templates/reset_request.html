@@ -6,28 +6,25 @@
     <form action="" method="POST">
 
         {{ form.hidden_tag() }}
-        <fieldset class="form-group">
             <legend class="border-bottom mb-4">Сбросить пароль</legend>
 
             <div class="form-group">
-                {{ form.email.label(class='form-control-label') }}
                 {% if form.email.errors %}
-                {{ form.email(class='form-control form-control-lg is-invalid') }}
+                {{ form.email(class='form-post-title is-invalid') }}
                 <div class="invalid-feedback">
                     {% for errors in form.email.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                    {{ form.email(class='form-control form-control-lg') }}
+                    {{ form.email(class='form-post-title', placeholder='Емайл') }}
                 {% endif %}
             </div>
 
 
-        </fieldset>
 
         <div class="form-group">
-            {{ form.submit(class='btn btn-outline-info') }}
+            {{ form.submit(class='btn_reset') }}
         </div>
 
     </form>

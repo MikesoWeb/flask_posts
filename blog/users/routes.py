@@ -1,7 +1,8 @@
 import os
 import shutil
+from datetime import datetime
 
-from flask import Blueprint, request, render_template, url_for, flash
+from flask import Blueprint, request, render_template, url_for, flash, g
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.utils import redirect
 
@@ -11,6 +12,16 @@ from blog.users.forms import RequestResetForm, ResetPasswordForm, UpdateAccountF
 from blog.users.utils import send_reset_email, save_picture
 
 users = Blueprint('users', __name__)
+
+
+@users.before_request
+def before_request():
+    g.user = current_user
+    if g.user.is_authenticated:
+        old_img = g.user.image_file
+        g.user.last_seen = datetime.utcnow()
+        db.session.add(g.user)
+        db.session.commit()
 
 
 @users.route('/register', methods=['GET', 'POST'])
@@ -30,13 +41,13 @@ def register():
         shutil.copy(f'{os.getcwd()}/blog/static/profile_pics/default.jpg', full_path)
         flash('Ваш аккаунт был создан. Вы можете войти на блог', 'success')
         return redirect(url_for('users.login'))
-    return render_template('register.html', form=form, title='Регистрация')
+    return render_template('register.html', form=form, title='Регистрация', legend='Регистрация')
 
 
 @users.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('users.blog'))
+        return redirect(url_for('main.blog'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
@@ -46,7 +57,7 @@ def login():
             return redirect(next_page) if next_page else redirect(url_for('users.account'))
         else:
             flash('Войти не удалось. Пожалуйста, проверьте электронную почту или пароль', 'danger')
-    return render_template('login.html', form=form, title='Логин')
+    return render_template('login.html', form=form, title='Логин', legend='Войти')
 
 
 @users.route('/logout')
@@ -58,21 +69,24 @@ def logout():
 @users.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
+    old_img = url_for('static',
+                      filename=f'profile_pics/{g.user}/default.jpg')
     form = UpdateAccountForm()
-    if form.validate_on_submit():
+    if request.method == 'GET':
+        form.username.data = g.user.username
+        form.email.data = g.user.email
+    elif form.validate_on_submit():
+        g.user.username = form.username.data
+        g.user.email = form.email.data
         if form.picture.data:
-            picture_file = save_picture(form.picture.data)
-            current_user.image_file = picture_file
+            g.user = save_picture(form.picture.data)
+        else:
+            form.picture.data = g.user.image_file
 
-        current_user.username = form.username.data
-        current_user.email = form.email.data
         db.session.commit()
         flash('Ваш аккаунт был обновлён!', 'success')
         return redirect(url_for('users.account'))
-    elif request.method == 'GET':
-        form.username.data = current_user.username
-        form.email.data = current_user.email
-    image_file = url_for('static', filename=f'profile_pics/' + current_user.username + '/' + current_user.image_file)
+    image_file = url_for('static', filename=f'profile_pics/' + g.user.username + '/' + g.user.image_file)
     user_all = [x.username for x in db.session.query(User.username).distinct()]
     return render_template('account.html', title='Аккаунт',
                            image_file=image_file, form=form, user_all=user_all)

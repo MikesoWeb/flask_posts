@@ -23,6 +23,7 @@ def create_app(config_class=Config):
     login_manager.init_app(app)
     mail.init_app(app)
 
+
     from blog.users.routes import users
     from blog.posts.routes import posts
     from blog.main.routes import main
