@@ -34,7 +34,7 @@ def new_post():
 def post(post_id):
     post = Post.query.get_or_404(post_id)
     image_file = url_for('static',
-                         filename=f'profile_pics/' + current_user.username + '/' + post.image_post)
+                         filename=f'profile_pics/' + post.author.username + '/' + post.image_post)
     return render_template('posts/post.html', title=post.title, post=post, image_file=image_file)
 
 
@@ -49,18 +49,20 @@ def update_post(post_id):
     if request.method == 'GET':
         form.title.data = post.title
         form.content.data = post.content
-    elif form.validate_on_submit():
+
+    if form.validate_on_submit():
         post.title = form.title.data
         post.content = form.content.data
         if form.picture.data:
             post.image_post = save_picture(form.picture.data)
-
         db.session.commit()
         flash('Данный пост был обновлён', 'success')
+
         return redirect(url_for('posts.post', post_id=post.id))
 
     image_file = url_for('static',
                          filename=f'profile_pics/{current_user.username}/{post.image_post}')
+
     return render_template('posts/update_post.html', title='Обновить статью',
                            form=form, legend='Обновить статью', image_file=image_file, post=post)
 

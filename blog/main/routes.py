@@ -12,6 +12,7 @@ def home():
 
 
 @main.route('/blog', methods=['POST', 'GET'])
+@login_required
 def blog():
     post = Post.query.get_or_404(current_user.id)
     if post:

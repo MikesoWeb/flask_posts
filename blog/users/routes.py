@@ -18,7 +18,6 @@ users = Blueprint('users', __name__, template_folder='templates')
 def before_request():
     g.user = current_user
     if g.user.is_authenticated:
-        old_img = g.user.image_file
         g.user.last_seen = datetime.utcnow()
         db.session.add(g.user)
         db.session.commit()
@@ -69,25 +68,28 @@ def logout():
 @users.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
+    # текущий пользователь User(Леван, levan@microsoft.com, 20e8c05326b36d6f.png)
+    user = User.query.filter_by(username=current_user.username).first()
+    posts = Post.query.all()
+    users = User.query.all()
     form = UpdateAccountForm()
     if request.method == 'GET':
-        form.username.data = g.user.username
-        form.email.data = g.user.email
+        form.username.data = current_user.username
+        form.email.data = current_user.email
     elif form.validate_on_submit():
-        g.user.username = form.username.data
-        g.user.email = form.email.data
+        current_user.username = form.username.data
+        current_user.email = form.email.data
         if form.picture.data:
-            g.user = save_picture(form.picture.data)
+            current_user.image_file = save_picture(form.picture.data)
         else:
-            form.picture.data = g.user.image_file
+            form.picture.data = current_user.image_file
 
         db.session.commit()
         flash('Ваш аккаунт был обновлён!', 'success')
         return redirect(url_for('users.account'))
-    image_file = url_for('static', filename=f'profile_pics/' + g.user.username + '/' + g.user.image_file)
-    user_all = [x.username for x in db.session.query(User.username).distinct()]
+    image_file = url_for('static', filename=f'profile_pics/' + current_user.username + '/' + current_user.image_file)
     return render_template('users/account.html', title='Аккаунт',
-                           image_file=image_file, form=form, user_all=user_all)
+                           image_file=image_file, form=form, posts=posts, users=users, user=user)
 
 
 @users.route('/user/<string:username>')
@@ -110,7 +112,7 @@ def reset_request():
         send_reset_email(user)
         flash('На указанный емайл были отправлены инструкции по восстановлению пароля', 'info')
         return redirect(url_for('users.login'))
-    return render_template('/users/reset_request.html', form=form, title='Сброс пароля')
+    return render_template('users/reset_request.html', form=form, title='Сброс пароля')
 
 
 @users.route('/reset_password/<token>', methods=['GET', 'POST'])
@@ -128,4 +130,4 @@ def reset_token(token):
         db.session.commit()
         flash('Ваш пароль был обновлён! Вы можете войти на блог', 'success')
         return redirect(url_for('users.login'))
-    return render_template('/users/reset_token.html', form=form, title='Сброс пароля')
+    return render_template('users/reset_token.html', form=form, title='Сброс пароля')

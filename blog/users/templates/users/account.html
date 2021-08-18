@@ -5,8 +5,41 @@
     <div class="empty_block"></div>
 
 
+
 <div class="content-section">
-    <div class="card">
+
+
+    <div class="left_side">
+    <h5>Список на блоге: </h5>
+                    <ul>
+                        {% for user in users: %}
+
+                            <li> <a href="{{ url_for('users.user_posts', username=user.username)}}">{{ user.username }}"</a></li>
+
+                        {% endfor %}
+                    </ul>
+
+</div>
+<div class="list_posts">
+     <h5>Список статей: </h5>
+
+{#                    <ul>
+                    {% for user in users: %}
+
+                       <li><a href="{{ url_for('users.user_posts', username=user.username)}}">{{ user.posts.author }}</a></li>
+
+                    {% endfor %}
+                    </ul>
+#}
+
+    <ol>
+        {% for post in user.posts %}
+           <li><a href="{{ url_for('posts.post', post_id=post.id)}}">{{ post.title }}</a></li>
+        {% endfor %}
+     </ol>
+</div>
+<div class="right_side">
+<div class="card">
                         <legend class="border-bottom mb-6 font_info">Информация об аккаунте</legend>
 
         <img class="card-body account-img " src="{{ image_file }}">
@@ -17,7 +50,7 @@
     </div>
 
     <!-- FORM HERE -->
-    <div class="update_info">
+<div class="update_info">
 
         <form action="" method="POST" enctype="multipart/form-data">
 
@@ -77,7 +110,7 @@
 
         </form>
     </div>
-
+</div>
 
 
 <!--        {{ user_all  }}-->

@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+<center>
 <div class="post">
 <img src="{{ url_for('static', filename='profile_pics/' + post.author.username + '/' + post.author.image_file) }}"
      alt="" class="mr-3 mt-3 rounded-circle" style="width:40px;">
@@ -18,7 +19,7 @@
 <h2 class="article-title"> {{ post.title }}</h2>
 <p class="article-content">{{ post.content }}</p>
 <img src="{{ image_file }}" alt="post_img">
-
+</center>
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
      aria-labelledby="staticBackdropLabel" aria-hidden="true">
