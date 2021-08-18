@@ -7,7 +7,7 @@ from blog.models import Post
 from blog.posts.forms import PostForm, PostUpdateForm
 from blog.users.utils import save_picture
 
-posts = Blueprint('posts', __name__)
+posts = Blueprint('posts', __name__, template_folder='templates')
 
 
 @posts.route('/post/new', methods=['GET', 'POST'])
@@ -25,7 +25,7 @@ def new_post():
         return redirect(url_for('main.blog'))
     image_file = url_for('static',
                          filename=f'profile_pics/' + current_user.username + '/' + current_user.image_file)
-    return render_template('create_post.html', title='Новая статья',
+    return render_template('posts/create_post.html', title='Новая статья',
                            form=form, legend='Новая статья', image_file=image_file)
 
 
@@ -35,7 +35,7 @@ def post(post_id):
     post = Post.query.get_or_404(post_id)
     image_file = url_for('static',
                          filename=f'profile_pics/' + current_user.username + '/' + post.image_post)
-    return render_template('post.html', title=post.title, post=post, image_file=image_file)
+    return render_template('posts/post.html', title=post.title, post=post, image_file=image_file)
 
 
 @posts.route('/post/<int:post_id>/update', methods=['GET', 'POST'])
@@ -61,7 +61,7 @@ def update_post(post_id):
 
     image_file = url_for('static',
                          filename=f'profile_pics/{current_user.username}/{post.image_post}')
-    return render_template('update_post.html', title='Обновить статью',
+    return render_template('posts/update_post.html', title='Обновить статью',
                            form=form, legend='Обновить статью', image_file=image_file, post=post)
 
 

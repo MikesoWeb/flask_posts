@@ -11,7 +11,7 @@ from blog.models import User, Post
 from blog.users.forms import RequestResetForm, ResetPasswordForm, UpdateAccountForm, RegistrationForm, LoginForm
 from blog.users.utils import send_reset_email, save_picture
 
-users = Blueprint('users', __name__)
+users = Blueprint('users', __name__, template_folder='templates')
 
 
 @users.before_request
@@ -41,7 +41,7 @@ def register():
         shutil.copy(f'{os.getcwd()}/blog/static/profile_pics/default.jpg', full_path)
         flash('Ваш аккаунт был создан. Вы можете войти на блог', 'success')
         return redirect(url_for('users.login'))
-    return render_template('register.html', form=form, title='Регистрация', legend='Регистрация')
+    return render_template('users/register.html', form=form, title='Регистрация', legend='Регистрация')
 
 
 @users.route('/login', methods=['GET', 'POST'])
@@ -57,7 +57,7 @@ def login():
             return redirect(next_page) if next_page else redirect(url_for('users.account'))
         else:
             flash('Войти не удалось. Пожалуйста, проверьте электронную почту или пароль', 'danger')
-    return render_template('login.html', form=form, title='Логин', legend='Войти')
+    return render_template('users/login.html', form=form, title='Логин', legend='Войти')
 
 
 @users.route('/logout')
@@ -69,8 +69,6 @@ def logout():
 @users.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
-    old_img = url_for('static',
-                      filename=f'profile_pics/{g.user}/default.jpg')
     form = UpdateAccountForm()
     if request.method == 'GET':
         form.username.data = g.user.username
@@ -88,7 +86,7 @@ def account():
         return redirect(url_for('users.account'))
     image_file = url_for('static', filename=f'profile_pics/' + g.user.username + '/' + g.user.image_file)
     user_all = [x.username for x in db.session.query(User.username).distinct()]
-    return render_template('account.html', title='Аккаунт',
+    return render_template('users/account.html', title='Аккаунт',
                            image_file=image_file, form=form, user_all=user_all)
 
 
@@ -99,7 +97,7 @@ def user_posts(username):
     posts = Post.query.filter_by(author=user) \
         .order_by(Post.date_posted.desc()) \
         .paginate(page=page, per_page=3)
-    return render_template('user_posts.html', title='Блог>', posts=posts, user=user)
+    return render_template('users/user_posts.html', title='Блог>', posts=posts, user=user)
 
 
 @users.route('/reset_password', methods=['GET', 'POST'])
@@ -112,7 +110,7 @@ def reset_request():
         send_reset_email(user)
         flash('На указанный емайл были отправлены инструкции по восстановлению пароля', 'info')
         return redirect(url_for('users.login'))
-    return render_template('reset_request.html', form=form, title='Сброс пароля')
+    return render_template('/users/reset_request.html', form=form, title='Сброс пароля')
 
 
 @users.route('/reset_password/<token>', methods=['GET', 'POST'])
@@ -130,4 +128,4 @@ def reset_token(token):
         db.session.commit()
         flash('Ваш пароль был обновлён! Вы можете войти на блог', 'success')
         return redirect(url_for('users.login'))
-    return render_template('reset_token.html', form=form, title='Сброс пароля')
+    return render_template('/users/reset_token.html', form=form, title='Сброс пароля')
