@@ -10,11 +10,11 @@
 
 
     <div class="left_side">
-    <h5>Список на блоге: </h5>
+    <h5>Список на блоге:</h5>
                     <ul>
                         {% for user in users: %}
 
-                            <li> <a href="{{ url_for('users.user_posts', username=user.username)}}">{{ user.username }}"</a></li>
+                            <li> <a href="{{ url_for('users.user_posts', username=user.username)}}">{{ user.username }}</a></li>
 
                         {% endfor %}
                     </ul>
@@ -42,7 +42,16 @@
 <div class="card">
                         <legend class="border-bottom mb-6 font_info">Информация об аккаунте</legend>
 
-        <img class="card-body account-img " src="{{ image_file }}">
+<!--        <img class="card-body account-img " src="{{ image_file }}">-->
+
+        {% if not img_file %}
+            <img class="card-body account-img" src="{{ url_for('static', filename='profile_pics/default.jpg') }}" alt="default_img" class="one_img">
+
+        {% else %}
+             <img class="card-body account-img" src="data:;base64,{{ img_file }}" alt="foto" class="one_img">
+
+        {% endif %}
+        <br>
         <div class="media-body">
             <h4 class="account-heading">{{ current_user.username }}</h4>
             <p class="text-secondary">{{ current_user.email }}</p>

@@ -1,3 +1,4 @@
+import base64
 import os
 
 from flask import (Blueprint, render_template, redirect, url_for, flash, abort, request, current_app)
@@ -24,7 +25,7 @@ def new_post():
         flash('Пост был опубликован!', 'success')
         return redirect(url_for('main.blog'))
     image_file = url_for('static',
-                         filename=f'profile_pics/' + current_user.username + '/' + current_user.image_file)
+                         filename=f'profile_pics/' + current_user.username + '/' + current_user.username)
     return render_template('posts/create_post.html', title='Новая статья',
                            form=form, legend='Новая статья', image_file=image_file)
 
@@ -33,9 +34,12 @@ def new_post():
 @login_required
 def post(post_id):
     post = Post.query.get_or_404(post_id)
-    image_file = url_for('static',
+    image_file_post = url_for('static',
                          filename=f'profile_pics/' + post.author.username + '/' + post.image_post)
-    return render_template('posts/post.html', title=post.title, post=post, image_file=image_file)
+    author_picture = post.author.picture
+    print(post.author.picture, '##############')
+    image_file = base64.b64encode(author_picture).decode('ascii') if author_picture else ''
+    return render_template('posts/post.html', title=post.title, post=post, image_file=image_file, image_file_post=image_file_post)
 
 
 @posts.route('/post/<int:post_id>/update', methods=['GET', 'POST'])
@@ -57,7 +61,6 @@ def update_post(post_id):
             post.image_post = save_picture(form.picture.data)
         db.session.commit()
         flash('Данный пост был обновлён', 'success')
-
         return redirect(url_for('posts.post', post_id=post.id))
 
     image_file = url_for('static',

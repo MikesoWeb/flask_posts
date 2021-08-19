@@ -1,3 +1,5 @@
+import base64
+
 from flask import render_template, request, Blueprint, url_for
 from flask_login import login_required, current_user
 
@@ -21,8 +23,11 @@ def blog():
             .paginate(page=page, per_page=2)
         image_file = url_for('static',
                              filename=f'profile_pics/{current_user.username}/{post.image_post}')
+        author_picture = post.author.picture
 
-        return render_template('main/blog.html', title='Блог>', posts=posts, image_file=image_file)
+        img_file = base64.b64encode(author_picture).decode('ascii')
+
+        return render_template('main/blog.html', title='Блог>', posts=posts, img_file=img_file)
 
 
 @main.route('/about')

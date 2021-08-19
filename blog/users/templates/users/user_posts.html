@@ -6,8 +6,10 @@
 
 <div class="post">
 
-    <img src="{{ url_for('static', filename='profile_pics/' + post.author.username + '/' + post.author.image_file) }}"
-         alt="" class="mr-3 mt-3 rounded-circle" style="width:40px;">
+<!--    <img src="data:;base64,{{ url_for('static', filename='profile_pics/' + post.author.username + '/' + img_file) }}"-->
+<!--         alt="" class="mr-3 mt-3 rounded-circle" style="width:40px;">-->
+
+    <img src="data:;base64,{{ img_file }}" alt="" class="mr-3 mt-3 rounded-circle" style="width:40px;">
 
     <a class="mr-2" href="{{ url_for('users.user_posts', username=post.author.username)}}">{{ post.author.username }}</a>
     <small class="text-muted">{{ post.date_posted.strftime('%d.%m.%Y-%H.%M') }}</small>

@@ -3,9 +3,10 @@
 {% block content %}
 <center>
 <div class="post">
-<img src="{{ url_for('static', filename='profile_pics/' + post.author.username + '/' + post.author.image_file) }}"
+    {% if image_file %}
+<img src="{{ url_for('static', filename='profile_pics/' + post.author.username + '/' + 'post.author.picture') }}"
      alt="" class="mr-3 mt-3 rounded-circle" style="width:40px;">
-
+    {% endif %}
 <a class="mr-2" href="{{ url_for('users.user_posts', username=post.author.username)}}">{{ post.author.username }}</a>
 <small class="text-muted">{{ post.date_posted.strftime('%d.%m.%Y-%H.%M') }}</small>
 {% if post.author == current_user %}|
@@ -18,7 +19,7 @@
 {% endif %}
 <h2 class="article-title"> {{ post.title }}</h2>
 <p class="article-content">{{ post.content }}</p>
-<img src="{{ image_file }}" alt="post_img">
+<img src="{{ image_file_post }}" alt="post_img">
 </center>
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
