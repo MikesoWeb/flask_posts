@@ -1,7 +1,8 @@
-import base64
 import os
+import shutil
 from datetime import datetime
 
+import sqlalchemy
 from flask import Blueprint, request, render_template, url_for, flash, g
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.utils import redirect
@@ -9,7 +10,7 @@ from werkzeug.utils import redirect
 from blog import bcrypt, db
 from blog.models import User, Post
 from blog.users.forms import RequestResetForm, ResetPasswordForm, UpdateAccountForm, RegistrationForm, LoginForm
-from blog.users.utils import send_reset_email
+from blog.users.utils import send_reset_email, save_picture
 
 users = Blueprint('users', __name__, template_folder='templates')
 
@@ -25,28 +26,22 @@ def before_request():
 
 @users.route('/register', methods=['GET', 'POST'])
 def register():
-    # if current_user.is_authenticated:
-    #     return redirect(url_for('main.blog'))
+    if current_user.is_authenticated:
+        return redirect(url_for('main.blog'))
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(user)
         db.session.commit()
-        if form.picture.data:
-            user.picture = form.picture.data
-            user.picture.read()
-            db.session.commit()
-        else:
-            print(10 * 'None')
+
+        full_path = os.path.join(os.getcwd(), 'blog/static', 'profile_pics', user.username)
+        if not os.path.exists(full_path):
+            os.mkdir(full_path)
+        shutil.copy(f'{os.getcwd()}/blog/static/profile_pics/default.jpg', full_path)
         flash('Ваш аккаунт был создан. Вы можете войти на блог', 'success')
         return redirect(url_for('users.login'))
-    context = {
-        'form': form,
-        'title': 'Регистрация',
-        'legend': 'Регистрация'
-    }
-    return render_template('users/register.html', **context)
+    return render_template('users/register.html', form=form, title='Регистрация', legend='Регистрация')
 
 
 @users.route('/login', methods=['GET', 'POST'])
@@ -65,37 +60,44 @@ def login():
     return render_template('users/login.html', form=form, title='Логин', legend='Войти')
 
 
+@users.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('main.home'))
+
+
 @users.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
     # текущий пользователь User(Леван, levan@microsoft.com, 20e8c05326b36d6f.png)
+    # https://pythonru.com/biblioteki/crud-sqlalchemy-orm
     user = User.query.filter_by(username=current_user.username).first()
     posts = Post.query.all()
     users = User.query.all()
     form = UpdateAccountForm()
+
     if request.method == 'GET':
         form.username.data = current_user.username
         form.email.data = current_user.email
-    if form.validate_on_submit():
+    elif form.validate_on_submit():
+        path_one = os.path.join(os.getcwd(), f'blog/static/profile_pics/{user.username}')
+        path_two = os.path.join(os.getcwd(), f'blog/static/profile_pics/{form.username.data}')
+        os.rename(path_one, path_two)
         current_user.username = form.username.data
         current_user.email = form.email.data
+
+
         if form.picture.data:
-            # current_user.picture = save_picture(form.picture.data)
-            current_user.picture = form.picture.data.read()
-            print(current_user.picture, '##############)')
-            # db.session.add(current_user.picture)
-            db.session.commit()
-            flash('Ваш аккаунт был обновлён!', 'success')
-            return redirect(url_for('users.account'))
-
+            current_user.image_file = save_picture(form.picture.data)
         else:
-            print(20 * '#')
-    img_file = base64.b64encode(current_user.picture).decode(
-        'ascii') if current_user.picture else ''
+            form.picture.data = current_user.image_file
 
-    # image_file = url_for('static', filename=f'profile_pics/' + current_user.username + '/' + current_user.image_file)
+        db.session.commit()
+        flash('Ваш аккаунт был обновлён!', 'success')
+        return redirect(url_for('users.account'))
+    image_file = url_for('static', filename=f'profile_pics/' + current_user.username + '/account_img/' + current_user.image_file)
     return render_template('users/account.html', title='Аккаунт',
-                           form=form, posts=posts, users=users, user=user, img_file=img_file)
+                           image_file=image_file, form=form, posts=posts, users=users, user=user)
 
 
 @users.route('/user/<string:username>')
@@ -105,11 +107,8 @@ def user_posts(username):
     posts = Post.query.filter_by(author=user) \
         .order_by(Post.date_posted.desc()) \
         .paginate(page=page, per_page=3)
-    author_picture = user.picture
 
-    img_file = base64.b64encode(author_picture).decode('ascii') if author_picture else ''
-
-    return render_template('users/user_posts.html', title='Блог>', posts=posts, user=user, img_file=img_file)
+    return render_template('users/user_posts.html', title='Блог>', posts=posts, user=user)
 
 
 @users.route('/reset_password', methods=['GET', 'POST'])
@@ -143,7 +142,20 @@ def reset_token(token):
     return render_template('users/reset_token.html', form=form, title='Сброс пароля')
 
 
-@users.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('main.home'))
+@users.route('/user_delete/<string:username>', methods=['GET', 'POST'])
+@login_required
+def delete_user(username):
+    try:
+        user = User.query.filter_by(username=username).first_or_404()
+        if user and user.username != 'Mike':
+            db.session.delete(user)
+            db.session.commit()
+            flash(f'Пользователь {username} был удалён!', 'info')
+            return redirect(url_for('users.account'))
+    except sqlalchemy.exc.IntegrityError:
+        flash(f'У пользователя {username} есть контент!', 'warning')
+        return redirect(url_for('users.account'))
+
+    else:
+        flash('Администрация!', 'info')
+        return redirect(url_for('users.account'))
